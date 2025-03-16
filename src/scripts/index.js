@@ -21,9 +21,9 @@ contentPage.addEventListener('click', (evt) => {
     openModal(resultClick, 'profile__edit-button', '.popup_type_edit');
     openModal(resultClick, 'profile__add-button', '.popup_type_new-card');
     openModal(resultClick, 'card__image', '.popup_type_image');
-    closeModal('.popup_type_edit')
-    closeModal('.popup_type_new-card')
-    closeModal('.popup_type_image')
+    closeModal('.popup_type_edit');
+    closeModal('.popup_type_new-card');
+    closeModal('.popup_type_image');
 })
 
 // Изменяем данные аккаунта в DOM

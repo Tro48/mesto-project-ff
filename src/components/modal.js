@@ -4,10 +4,11 @@ import { placesList } from '../scripts/index.js'
 
 // DOM Узлы:
 const page = document.querySelector('.page');
+const formElement = page.querySelectorAll('.popup')
 const formElementProfile = page.querySelector('.popup_type_edit').querySelector('.popup__form');
+const formElementAddCard = page.querySelector('.popup_type_new-card').querySelector('.popup__form');
 const nameInput = formElementProfile.querySelector('.popup__input_type_name');
 const jobInput = formElementProfile.querySelector('.popup__input_type_description');
-const formElementAddCard = page.querySelector('.popup_type_new-card').querySelector('.popup__form');
 const profileName = page.querySelector('.profile__title');
 const profileJob = page.querySelector('.profile__description');
 
@@ -17,6 +18,7 @@ function openModal(resultClick, buttonClass, modalClass) {
     if (resultClick.contains(buttonClass)) {
         page.querySelector(modalClass).classList.add('popup_is-opened');
         page.addEventListener('keydown', closeModalKeydown);
+        getTextInput(profileName, profileJob);
     }
 }
 
@@ -24,6 +26,11 @@ function closeModal(modalClass) {
     page.addEventListener('click', (evt) => {
         if (evt.target.classList.contains('popup__close') || evt.target.classList.contains('popup_is-opened')) {
             page.querySelector(modalClass).classList.remove('popup_is-opened');
+            if (modalClass === '.popup_type_edit') {
+                formElementProfile.reset();
+            } else if (modalClass === '.popup_type_new-card') {
+                formElementAddCard.reset();
+            }
             page.removeEventListener('keydown', closeModalKeydown);
         }
     })
@@ -31,7 +38,15 @@ function closeModal(modalClass) {
 
 function closeModalKeydown(evt) {
     if (evt.key === 'Escape') {
-        page.querySelector('.popup_is-opened').classList.remove('popup_is-opened');
+        formElement.forEach((itemForm) => {
+            let form = itemForm.querySelector('.popup__form');
+            if (itemForm.classList.contains('popup_is-opened')){
+                itemForm.classList.remove('popup_is-opened');
+            }
+            if (form && form.classList[0] === 'popup__form') {
+                itemForm.querySelector('.popup__form').reset()
+            }
+        })
     }
 }
 
@@ -41,14 +56,14 @@ function handleFormSubmit(evt) {
     profileName.textContent = nameInput.value;
     profileJob.textContent = jobInput.value;
     formElementProfile.reset();
-    getTextPlaseholder(profileName, profileJob);
+    getTextInput(profileName, profileJob);
     page.querySelector('.popup_is-opened').classList.remove('popup_is-opened');
 }
 
 //Функция отображения данных профиля в placeholder
-function getTextPlaseholder(profileName, profileJob) {
-    document.getElementsByName('name')[0].placeholder = profileName.innerHTML;
-    document.getElementsByName('description')[0].placeholder = profileJob.innerHTML;
+function getTextInput(profileName, profileJob) {
+    document.getElementsByName('name')[0].value = profileName.innerHTML;
+    document.getElementsByName('description')[0].value = profileJob.innerHTML;
 }
 
 // Функция получения новой карточки и добавления в DOM
@@ -60,9 +75,6 @@ function addCardModal(evt) {
     formElementAddCard.reset();
     page.querySelector('.popup_is-opened').classList.remove('popup_is-opened');
 }
-
-// Добавляем данные профиля в placeholder`ы формы
-getTextPlaseholder(profileName, profileJob);
 
 export { formElementAddCard, openModal, closeModal, addCardModal, formElementProfile, handleFormSubmit }
 
