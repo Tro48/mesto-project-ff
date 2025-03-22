@@ -1,32 +1,80 @@
 import '../pages/index.css'
 import { initialCards } from './cards.js'
-import { addCard, likeCard, openImg } from '../components/card.js'
-import { formElementAddCard, openModal, closeModal, addCardModal, formElementProfile, handleFormSubmit } from '../components/modal.js'
+import { addCard } from '../components/card.js'
+import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
 
 // @todo: DOM узлы
-const contentPage = document.querySelector('.content');
-const placesList = contentPage.querySelector('.places__list');
-
-// @todo: Вывести новую карточку на страницу
-formElementAddCard.addEventListener('submit', addCardModal)
+const pageContent = document.querySelector('.page__content');
+const content = pageContent.querySelector('.content');
+const placesList = content.querySelector('.places__list');
+const modalList = pageContent.querySelectorAll('.popup');
+const allForms = document.forms;
+let profileName = pageContent.querySelector('.profile__title');
+let profileJob = pageContent.querySelector('.profile__description');
+const imageModal = pageContent.querySelector('.popup__image');
+const captionModal = pageContent.querySelector('.popup__caption');
 
 // @todo: Вывести все карточки на страницу
 initialCards.forEach(function (item) {
-    placesList.append(addCard(item.name, item.link, likeCard, openImg));
+    placesList.append(addCard(item.name, item.link, openImg));
 });
 
-// Обработчик клика для открытия\закрытия модалок
-contentPage.addEventListener('click', (evt) => {
-    const resultClick = evt.target.classList
-    openModal(resultClick, 'profile__edit-button', '.popup_type_edit');
-    openModal(resultClick, 'profile__add-button', '.popup_type_new-card');
-    openModal(resultClick, 'card__image', '.popup_type_image');
-    closeModal('.popup_type_edit');
-    closeModal('.popup_type_new-card');
-    closeModal('.popup_type_image');
+// Обработчик клика для открытия и закрытия модалок
+content.addEventListener('click', (evt) => {
+    modalList.forEach((modalItem) => {
+        if (evt.target.classList.contains('profile__edit-button') && modalItem.classList.contains('popup_type_edit')){
+            addTextProfileInForm();
+            openModal(modalItem);
+            allForms.editProfile.addEventListener('submit', (evt) => {
+                handleFormSubmit(evt, modalItem);
+            })
+        } else if (evt.target.classList.contains('profile__add-button') && modalItem.classList.contains('popup_type_new-card')) {
+            openModal(modalItem);
+            allForms.newPlace.addEventListener('submit', (evt) => {
+                addCardModal(evt, modalItem);
+            })
+        } else if (evt.target.classList.contains('card__image') && modalItem.classList.contains('popup_type_image')) {
+            openImg(evt, modalItem);
+        }
+        modalItem.addEventListener('click', (evt) => {
+            closeModalByClick(evt, modalItem);
+        })
+    })
 })
 
-// Изменяем данные аккаунта в DOM
-formElementProfile.addEventListener('submit', handleFormSubmit)
+//Функция добавления новой карточки
+function addNewCard(placesList, titleCard, imgCardUrl) {
+    placesList.prepend(addCard(titleCard, imgCardUrl));
+}
 
-export { placesList, formElementAddCard }
+//Функция открытия картинки карточки
+function openImg(evt, modalItem) {
+    imageModal.src = evt.target.src;
+    captionModal.textContent = evt.target.alt;
+    openModal(modalItem);
+}
+
+// Функция обработки данных формы профиля и добавления в DOM
+function handleFormSubmit(evt, popup) {
+    evt.preventDefault();
+    profileName.textContent = allForms.editProfile.name.value;
+    profileJob.textContent = allForms.editProfile.description.value;
+    allForms.editProfile.reset();
+    addTextProfileInForm()
+    closeModal(popup);
+}
+
+function addTextProfileInForm () {
+    allForms.editProfile.name.value = profileName.textContent;
+    allForms.editProfile.description.value = profileJob.textContent;
+}
+
+// Функция получения новой карточки и добавления в DOM
+function addCardModal(evt, popup) {
+    evt.preventDefault();
+    const titleCard = allForms.newPlace.placeName.value;
+    const imgCardUrl = allForms.newPlace.link.value;
+    addNewCard(placesList, titleCard, imgCardUrl, openImg);
+    allForms.newPlace.reset();
+    closeModal(popup);
+}
