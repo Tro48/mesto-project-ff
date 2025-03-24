@@ -1,13 +1,14 @@
 const templateCard = document.querySelector('#card-template').content;
 
 // @todo: Функция создания карточки 
-function addCard(titleCard, imgCardUrl) {
+function addCard(titleCard, imgCardUrl, openImg) {
     const itemCard = templateCard.querySelector('.places__item').cloneNode(true);
     const cardImg = itemCard.querySelector('.card__image');
     cardImg.setAttribute('src', imgCardUrl);
     cardImg.setAttribute('alt', titleCard);
     itemCard.querySelector('.card__title').textContent = titleCard;
     itemCard.querySelector('.card__like-button').addEventListener('click', likeCard);
+    itemCard.querySelector('.card__image').addEventListener('click', openImg);
     itemCard.querySelector('.card__delete-button').addEventListener('click', () => {
         delCard(itemCard);
     });
