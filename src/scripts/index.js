@@ -27,7 +27,7 @@ content.querySelector('.profile__edit-button').addEventListener('click', () => {
     addTextProfileInForm()
     openModal(modalEditProfile);
     allForms.editProfile.addEventListener('submit', (evt) => {
-        handleFormSubmit(evt, modalEditProfile);
+        handleProfileFormSubmit(evt, modalEditProfile);
     })
 })
 content.querySelector('.profile__add-button').addEventListener('click', () => {
@@ -36,13 +36,6 @@ content.querySelector('.profile__add-button').addEventListener('click', () => {
         addCardModal(evt, modalCardAdd);
     })
 })
-
-content.querySelectorAll('.card__image').forEach((item) => {
-    item.addEventListener('click', (evt) => {
-        openImg(evt);
-    })
-})
-
 
 modalList.forEach((item) => {
     item.addEventListener('click', (evt) => {
@@ -63,7 +56,7 @@ function openImg(evt) {
 }
 
 // Функция обработки данных формы профиля и добавления в DOM
-function handleFormSubmit(evt, popup) {
+function handleProfileFormSubmit(evt, popup) {
     evt.preventDefault();
     profileName.textContent = allForms.editProfile.name.value;
     profileJob.textContent = allForms.editProfile.description.value;
