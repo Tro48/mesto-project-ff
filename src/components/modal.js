@@ -16,7 +16,7 @@ function closeModalKeydown(evt) {
     }
 }
 
-function closeModalByClick(evt, modalElement){
+function closeModalByClick(evt, modalElement, clearInputValue){
     if (evt.target.classList.contains('popup_is-opened') || evt.target.classList.contains('popup__close')){
         closeModal(modalElement);
     }

@@ -2,6 +2,8 @@ import '../pages/index.css'
 import { initialCards } from './cards.js'
 import { addCard } from '../components/card.js'
 import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
+import { enableValidation } from '../components/validation.js'
+import { validationConfig } from '../components/validationConfig.js'
 
 // @todo: DOM узлы
 const pageContent = document.querySelector('.page__content');
@@ -24,13 +26,15 @@ initialCards.forEach(function (item) {
 
 // Обработчик клика для открытия модалок
 content.querySelector('.profile__edit-button').addEventListener('click', () => {
-    addTextProfileInForm()
+    enableValidation(validationConfig);
+    addTextProfileInForm();
     openModal(modalEditProfile);
     allForms.editProfile.addEventListener('submit', (evt) => {
         handleProfileFormSubmit(evt, modalEditProfile);
     })
 })
 content.querySelector('.profile__add-button').addEventListener('click', () => {
+    enableValidation(validationConfig);
     openModal(modalCardAdd);
     allForms.newPlace.addEventListener('submit', (evt) => {
         addCardModal(evt, modalCardAdd);
