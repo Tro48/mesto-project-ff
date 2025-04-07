@@ -1,10 +1,9 @@
 import '../pages/index.css'
-import { initialCards } from './cards.js'
 import { addCard } from '../components/card.js'
 import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
 import { enableValidation } from '../components/validation.js'
 import { validationConfig } from '../components/validationConfig.js'
-import { configApi } from '../components/api.js'
+import { userData, cardsData, editProfile, addNewCard } from '../components/api.js'
 
 // @todo: DOM узлы
 const pageContent = document.querySelector('.page__content');
@@ -17,13 +16,11 @@ const modalCardAdd = pageContent.querySelector('.popup_type_new-card')
 const allForms = document.forms;
 let profileName = pageContent.querySelector('.profile__title');
 let profileJob = pageContent.querySelector('.profile__description');
+let profileImg = pageContent.querySelector('.profile__image')
 const imageModal = pageContent.querySelector('.popup__image');
 const captionModal = pageContent.querySelector('.popup__caption');
 
-// @todo: Вывести все карточки на страницу
-initialCards.forEach(function (item) {
-    placesList.append(addCard(item.name, item.link, openImg));
-});
+loadProfileData()
 
 // Обработчик клика для открытия модалок
 content.querySelector('.profile__edit-button').addEventListener('click', () => {
@@ -48,11 +45,6 @@ modalList.forEach((item) => {
     })
 })
 
-//Функция добавления новой карточки
-function addNewCard(titleCard, imgCardUrl) {
-    placesList.prepend(addCard(titleCard, imgCardUrl, openImg));
-}
-
 //Функция открытия картинки карточки
 function openImg(evt) {
     imageModal.src = evt.target.src;
@@ -63,8 +55,8 @@ function openImg(evt) {
 // Функция обработки данных формы профиля и добавления в DOM
 function handleProfileFormSubmit(evt, popup) {
     evt.preventDefault();
-    profileName.textContent = allForms.editProfile.name.value;
-    profileJob.textContent = allForms.editProfile.description.value;
+    editProfile(allForms.editProfile.name.value, allForms.editProfile.description.value)
+    .then(loadProfileData())
     allForms.editProfile.reset();
     addTextProfileInForm()
     closeModal(popup);
@@ -80,24 +72,31 @@ function addCardModal(evt, popup) {
     evt.preventDefault();
     const titleCard = allForms.newPlace.placeName.value;
     const imgCardUrl = allForms.newPlace.link.value;
-    addNewCard(titleCard, imgCardUrl);
+    addNewCard(titleCard, imgCardUrl).then(() => {
+        Promise.all([userData(), cardsData()])
+            .then(([userDataResult, cardsDataResult]) =>{
+                placesList.innerHTML = '';
+                const resultValid = userDataResult._id === cardsDataResult[0].owner._id
+                placesList.append(addCard(titleCard, imgCardUrl, openImg, resultValid, cardsDataResult[0]._id))
+                loadProfileData();
+            })
+    })
     allForms.newPlace.reset();
     closeModal(popup);
 }
 
-
-//test api
-// let result
-
-// fetch(`${configApi.baseUrl}users/me`, {
-//         headers: {
-//             authorization: configApi.headers.authorization,
-//             'Content-Type': configApi.headers.ContentType
-//         }
-//     })
-//     .then(res => res.json())
-//     .then(data => resultJson(data))
-
-// function resultJson(data){
-//     result = data
-// }
+function loadProfileData() {
+    Promise.all([userData(), cardsData()])
+        .then(([userDataResult, cardsDataResult]) => {
+            profileName.textContent = userDataResult.name;
+            profileJob.textContent = userDataResult.about;
+            profileImg.src = userDataResult.avatar;
+            profileImg.alt = `Фото профиля ${userDataResult.name}`;
+            placesList.innerHTML = '';
+            cardsDataResult.forEach(function (item) {
+                const resultValid = userDataResult._id === item.owner._id;
+                placesList.append(addCard(item.name, item.link, openImg, resultValid, item._id));
+            });
+        })
+        .catch(error => { console.error(error) })
+}
