@@ -4,6 +4,7 @@ import { addCard } from '../components/card.js'
 import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
 import { enableValidation } from '../components/validation.js'
 import { validationConfig } from '../components/validationConfig.js'
+import { configApi } from '../components/api.js'
 
 // @todo: DOM узлы
 const pageContent = document.querySelector('.page__content');
@@ -83,3 +84,20 @@ function addCardModal(evt, popup) {
     allForms.newPlace.reset();
     closeModal(popup);
 }
+
+
+//test api
+// let result
+
+// fetch(`${configApi.baseUrl}users/me`, {
+//         headers: {
+//             authorization: configApi.headers.authorization,
+//             'Content-Type': configApi.headers.ContentType
+//         }
+//     })
+//     .then(res => res.json())
+//     .then(data => resultJson(data))
+
+// function resultJson(data){
+//     result = data
+// }
