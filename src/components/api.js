@@ -39,6 +39,42 @@ export const editProfile = (name, about) => {
     .then(res => res.json())
 }
 
+export const addAvatar = (url) => {
+    return fetch(`${configApi.baseUrl}/users/me/avatar`, {
+        method: 'PATCH',
+        headers: {
+            authorization: configApi.headers.authorization,
+            'Content-Type': configApi.headers.ContentType,
+        },
+        body: JSON.stringify({
+            avatar: url
+        })
+    })
+        .then(res => res.json())
+}
+
+export const addLike = (cardId) => {
+    return fetch(`${configApi.baseUrl}/cards/likes/${cardId}`, {
+        method: 'PUT',
+        headers: {
+            authorization: configApi.headers.authorization,
+            'Content-Type': configApi.headers.ContentType,
+        },
+    })
+        .then(res => res.json())
+}
+
+export const removeLike = (cardId) => {
+    return fetch(`${configApi.baseUrl}/cards/likes/${cardId}`, {
+        method: 'DELETE',
+        headers: {
+            authorization: configApi.headers.authorization,
+            'Content-Type': configApi.headers.ContentType,
+        },
+    })
+        .then(res => res.json())
+}
+
 export const addNewCard = (name, link) => {
     return fetch(`${configApi.baseUrl}/cards`, {
         method: 'POST',

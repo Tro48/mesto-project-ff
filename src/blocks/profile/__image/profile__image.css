@@ -11,6 +11,38 @@
   background-image: url('../../../images/avatar.jpg');
 }
 
+.avatar_contayner {
+  position: relative;
+}
+
+.add_new_avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  height: 100%;
+  margin: 36 0 36 0;
+  background-color: transparent;
+  transition: background-color 0.5s;
+}
+
+.add_new_avatar-icon {
+  fill: transparent;
+  transition: fill 0.5s;
+}
+
+.add_new_avatar:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.add_new_avatar:hover .add_new_avatar-icon {
+  fill: #fff;
+  transition: fill 0.5s;
+}
+
 @media screen and (max-width: 740px) {
   .profile__image {
     margin: 0 10px 0 0;
