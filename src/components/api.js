@@ -54,7 +54,7 @@ export const addAvatar = (url) => {
 }
 
 export const addLike = (cardId) => {
-    return fetch(`${configApi.baseUrl}/cards/likes/${cardId}`, {
+    return fetch(`${configApi.baseUrl}/cards/likes/${cardId}/`, {
         method: 'PUT',
         headers: {
             authorization: configApi.headers.authorization,

@@ -51,7 +51,6 @@ allForms.newAvatar.addEventListener('submit', (evt) => {
     addNewAvatar(evt, modalNewAvatar)
 })
 
-
 modalList.forEach((item) => {
     item.addEventListener('click', (evt) => {
         closeModalByClick(evt, item);
@@ -97,15 +96,7 @@ function loadProfileData() {
         .then(([userDataResult, cardsDataResult]) => {
             renderProfileData(userDataResult.name, userDataResult.about);
             renderProfileAvatar(userDataResult.avatar, userDataResult.name);
-            cardsDataResult.forEach((item) => {
-                let likedIt
-                item.likes.forEach((profile) => {
-                    likedIt = profile._id === userDataResult._id
-                })
-                // console.log(likedIt)
-                const resultValidId = userDataResult._id === item.owner._id;
-                placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt));
-            });
+            renderCard(userDataResult, cardsDataResult)
         })
         .catch(error => { console.error(error) })
 }
@@ -129,3 +120,28 @@ function addNewAvatar(evt, modal){
         .then(allForms.newAvatar.reset())
     closeModal(modal)
 }
+
+function renderCard(userDataResult, cardsDataResult) {
+    cardsDataResult.forEach((item) => {
+        let likedIt
+        item.likes.forEach((profile) => {
+            likedIt = profile._id === userDataResult._id
+        })
+        const resultValidId = userDataResult._id === item.owner._id;
+        placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt));
+    });
+}
+
+// setInterval(test, 1000)
+
+// function test(){
+//     Promise.all([userData(), cardsData()])
+//         .then(([userDataResult, cardsDataResult]) => {
+//             const placesListLength = placesList.childNodes.length
+//             if (cardsDataResult.length !== placesListLength) {
+//                 console.log(true)
+//                 placesList.innerHTML = ''
+//                 renderCard(userDataResult, cardsDataResult)
+//             }
+//         })
+// }

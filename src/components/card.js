@@ -1,6 +1,4 @@
 const templateCard = document.querySelector('#card-template').content;
-const modalConfirm = document.querySelector('.popup_type_confirm');
-const confirmButton = modalConfirm.querySelector('.popup__button_confirm')
 import { deleteCard, addLike, removeLike } from '../components/api.js'
 import { openModal, closeModal } from '../components/modal.js'
 
@@ -8,6 +6,8 @@ import { openModal, closeModal } from '../components/modal.js'
 function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, likedIt) {
     const itemCard = templateCard.querySelector('.places__item').cloneNode(true);
     const cardImg = itemCard.querySelector('.card__image');
+    const modalConfirm = itemCard.querySelector('.popup_type_confirm');
+    const modalConfirmButton = itemCard.querySelector('.popup__button_confirm');
     cardImg.setAttribute('src', imgCardUrl);
     cardImg.setAttribute('alt', titleCard);
     itemCard.querySelector('.card__title').textContent = titleCard;
@@ -16,15 +16,16 @@ function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, lik
         likeCard(evt, idCard)});
     itemCard.querySelector('.card__image').addEventListener('click', openImg);
     itemCard.id = idCard
+    modalConfirmButton.addEventListener('click', () => { delCard(itemCard, idCard);
+        closeModal(modalConfirm)
+     })
     if (likedIt){
         itemCard.querySelector('.card__like-button').classList.add('card__like-button_is-active');
     } else {
         itemCard.querySelector('.card__like-button').classList.remove('card__like-button_is-active');
     }
     if (resultValid) {
-        itemCard.querySelector('.card__delete-button').addEventListener('click', () => {
-            delCard(itemCard, idCard)
-        });
+        itemCard.querySelector('.card__delete-button').addEventListener('click', () => { openModal(modalConfirm) });
     } else {
         itemCard.querySelector('.card__delete-button').classList.add('card__delete-button_hide');
     }
@@ -34,12 +35,8 @@ function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, lik
 
 // @todo: Функция удаления карточки
 function delCard(card, idCard) {
-    openModal(modalConfirm)
-    confirmButton.addEventListener('click', () => {
-        deleteCard(idCard)
-        card.remove();
-        closeModal(modalConfirm)
-    })
+    deleteCard(idCard);
+    card.remove();
 }
 
 // Функция лайка карточки
