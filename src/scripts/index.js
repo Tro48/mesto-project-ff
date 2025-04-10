@@ -25,29 +25,35 @@ loadProfileData()
 
 // Обработчик клика для открытия модалок
 content.querySelector('.profile__edit-button').addEventListener('click', () => {
+    modalEditProfile.querySelector('.popup__button').textContent = 'Сохранить';
     enableValidation(validationConfig);
     addTextProfileInForm();
     openModal(modalEditProfile);
 })
 content.querySelector('.profile__add-button').addEventListener('click', () => {
+    modalCardAdd.querySelector('.popup__button').textContent = 'Сохранить';
     enableValidation(validationConfig);
     openModal(modalCardAdd);
 })
 
 content.querySelector('.add_new_avatar').addEventListener('click', () => {
+    modalNewAvatar.querySelector('.popup__button').textContent = 'Сохранить';
     enableValidation(validationConfig);
     openModal(modalNewAvatar)
 })
 
 allForms.editProfile.addEventListener('submit', (evt) => {
+    modalEditProfile.querySelector('.popup__button').textContent = 'Сохранение...';
     handleProfileFormSubmit(evt, modalEditProfile);
 })
 
 allForms.newPlace.addEventListener('submit', (evt) => {
+    modalCardAdd.querySelector('.popup__button').textContent = 'Сохранение...';
     addCardModal(evt, modalCardAdd);
 })
 
 allForms.newAvatar.addEventListener('submit', (evt) => {
+    modalNewAvatar.querySelector('.popup__button').textContent = 'Сохранение...';
     addNewAvatar(evt, modalNewAvatar)
 })
 
@@ -68,9 +74,15 @@ function openImg(evt) {
 function handleProfileFormSubmit(evt, popup) {
     evt.preventDefault();
     editProfile(allForms.editProfile.name.value, allForms.editProfile.description.value)
-        .then(res => {renderProfileData(res.name, res.about)})
-        .then(allForms.editProfile.reset())
-    closeModal(popup);
+        .then(res => {renderProfileData(res.name, res.about)
+            return true
+        })
+        .then(res => {
+            if(res){
+                allForms.editProfile.reset();
+                closeModal(popup);
+            }
+        })
 }
 
 function addTextProfileInForm() {
@@ -86,9 +98,14 @@ function addCardModal(evt, popup) {
     addNewCard(titleCard, imgCardUrl)
         .then(res => {
             placesList.prepend(addCard(res.name, res.link, openImg, true, res._id, 0, false))
+            return true
         })
-    allForms.newPlace.reset();
-    closeModal(popup);
+        .then(res => {
+            if(res){
+                allForms.newPlace.reset();
+                closeModal(popup);
+            }
+        })
 }
 
 function loadProfileData() {
@@ -116,9 +133,14 @@ function addNewAvatar(evt, modal){
     addAvatar(allForms.newAvatar.linkAvatar.value)
         .then(res => {
             profileImg.src = res.avatar
+            return true
         })
-        .then(allForms.newAvatar.reset())
-    closeModal(modal)
+        .then(res => {
+            if(res){
+                allForms.newAvatar.reset();
+                closeModal(modal);
+            }
+        })
 }
 
 function renderCard(userDataResult, cardsDataResult) {
@@ -131,17 +153,3 @@ function renderCard(userDataResult, cardsDataResult) {
         placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt));
     });
 }
-
-// setInterval(test, 1000)
-
-// function test(){
-//     Promise.all([userData(), cardsData()])
-//         .then(([userDataResult, cardsDataResult]) => {
-//             const placesListLength = placesList.childNodes.length
-//             if (cardsDataResult.length !== placesListLength) {
-//                 console.log(true)
-//                 placesList.innerHTML = ''
-//                 renderCard(userDataResult, cardsDataResult)
-//             }
-//         })
-// }
