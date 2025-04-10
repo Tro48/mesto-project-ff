@@ -35,8 +35,12 @@ function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, lik
 
 // @todo: Функция удаления карточки
 function delCard(card, idCard) {
-    deleteCard(idCard);
-    card.remove();
+    deleteCard(idCard)
+    .then( res => {
+        if(res.ok){
+            card.remove();
+        }
+    })
 }
 
 // Функция лайка карточки
