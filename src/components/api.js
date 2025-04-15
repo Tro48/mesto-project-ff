@@ -1,27 +1,32 @@
-const configApi = {
-    baseUrl: 'https://nomoreparties.co/v1/wff-cohort-36',
-    headers: {
-        authorization: 'c4e8465c-47ec-436d-be1a-e5e1faad7127',
-        ContentType: 'application/json'
-    }
-}
+import { configApi } from "./config_api.js"
 
 export const userData = () => {
     return fetch(`${configApi.baseUrl}/users/me`, {
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType
+            'Content-Type': configApi.headers.contentTypeJson
         }
-    }).then(res => res.json())
+    }).then(res => {
+        if(res.ok) {
+            return res.json()
+        }
+        return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {console.log(err)});
 }
 
 export const cardsData = () => {
     return fetch(`${configApi.baseUrl}/cards`, {
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType
+            'Content-Type': configApi.headers.contentTypeJson
         }
-    }).then(res => res.json())
+    }).then(res => {
+        if (res.ok) {
+            return res.json()
+        }
+        return Promise.reject(`Ошибка: ${res.status}`);
+    }).catch((err) => { console.log(err) });
 }
 
 export const editProfile = (name, about) => {
@@ -29,14 +34,19 @@ export const editProfile = (name, about) => {
         method: 'PATCH',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType,
+            'Content-Type': configApi.headers.contentTypeJson,
         },
         body: JSON.stringify({
             name: name,
             about: about
         })
     })
-    .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }).catch((err) => { console.log(err) });
 }
 
 export const addAvatar = (url) => {
@@ -44,13 +54,18 @@ export const addAvatar = (url) => {
         method: 'PATCH',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType,
+            'Content-Type': configApi.headers.contentTypeJson,
         },
         body: JSON.stringify({
             avatar: url
         })
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }).catch((err) => { console.log(err) });
 }
 
 export const addLike = (cardId) => {
@@ -58,10 +73,15 @@ export const addLike = (cardId) => {
         method: 'PUT',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType,
+            'Content-Type': configApi.headers.contentTypeJson,
         },
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }).catch((err) => { console.log(err) });
 }
 
 export const removeLike = (cardId) => {
@@ -69,10 +89,15 @@ export const removeLike = (cardId) => {
         method: 'DELETE',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType,
+            'Content-Type': configApi.headers.contentTypeJson,
         },
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }).catch((err) => { console.log(err) });
 }
 
 export const addNewCard = (name, link) => {
@@ -80,13 +105,18 @@ export const addNewCard = (name, link) => {
         method: 'POST',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType
+            'Content-Type': configApi.headers.contentTypeJson
         },
         body: JSON.stringify({
             name: name,
             link: link
         })
-    }).then(res => res.json())
+    }).then(res => {
+        if (res.ok) {
+            return res.json()
+        }
+        return Promise.reject(`Ошибка: ${res.status}`);
+    }).catch((err) => { console.log(err) });
 }
 
 export const deleteCard = (cardId) => {
@@ -94,7 +124,7 @@ export const deleteCard = (cardId) => {
         method: 'DELETE',
         headers: {
             authorization: configApi.headers.authorization,
-            'Content-Type': configApi.headers.ContentType
+            'Content-Type': configApi.headers.contentTypeJson
         },
     })
 }

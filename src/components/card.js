@@ -1,9 +1,8 @@
 const templateCard = document.querySelector('#card-template').content;
 import { deleteCard, addLike, removeLike } from '../components/api.js'
-import { openModal, closeModal } from '../components/modal.js'
 
 // @todo: Функция создания карточки 
-function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, likedIt) {
+function addCard(titleCard, imgCardUrl, openImg, resultValid, idCard, likes, likedIt, openModal, closeModal) {
     const itemCard = templateCard.querySelector('.places__item').cloneNode(true);
     const cardImg = itemCard.querySelector('.card__image');
     const modalConfirm = itemCard.querySelector('.popup_type_confirm');
@@ -40,7 +39,7 @@ function delCard(card, idCard) {
         if(res.ok){
             card.remove();
         }
-    })
+    }).catch((err) => { console.log(err) });
 }
 
 // Функция лайка карточки

@@ -31,7 +31,7 @@ content.querySelector('.profile__edit-button').addEventListener('click', () => {
     openModal(modalEditProfile);
 })
 content.querySelector('.profile__add-button').addEventListener('click', () => {
-    modalCardAdd.querySelector('.popup__button').textContent = 'Сохранить';
+    modalCardAdd.querySelector('.popup__button').textContent = 'Создать';
     enableValidation(validationConfig);
     openModal(modalCardAdd);
 })
@@ -48,7 +48,7 @@ allForms.editProfile.addEventListener('submit', (evt) => {
 })
 
 allForms.newPlace.addEventListener('submit', (evt) => {
-    modalCardAdd.querySelector('.popup__button').textContent = 'Сохранение...';
+    modalCardAdd.querySelector('.popup__button').textContent = 'Создание...';
     addCardModal(evt, modalCardAdd);
 })
 
@@ -97,7 +97,7 @@ function addCardModal(evt, popup) {
     const imgCardUrl = allForms.newPlace.link.value;
     addNewCard(titleCard, imgCardUrl)
         .then(res => {
-            placesList.prepend(addCard(res.name, res.link, openImg, true, res._id, 0, false))
+            placesList.prepend(addCard(res.name, res.link, openImg, true, res._id, 0, false, openModal, closeModal))
             return true
         })
         .then(res => {
@@ -150,6 +150,6 @@ function renderCard(userDataResult, cardsDataResult) {
             likedIt = profile._id === userDataResult._id
         })
         const resultValidId = userDataResult._id === item.owner._id;
-        placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt));
+        placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt, openModal, closeModal));
     });
 }
