@@ -8,11 +8,11 @@ function enableValidation(validationConfig){
 
 function setEventListeners(form, validationConfig){
     const allInput = Array.from(form.querySelectorAll(validationConfig.inputSelector));
-    disabledButtonStatus(form, allInput, validationConfig);
+    toggleButtonState(form, allInput, validationConfig);
     allInput.forEach((inputItem) => {
         inputItem.addEventListener('input', () => {
             isValid(form, inputItem, validationConfig);
-            disabledButtonStatus(form, allInput, validationConfig);
+            toggleButtonState(form, allInput, validationConfig);
         })
     })
 }
@@ -23,10 +23,10 @@ function clearValidation(profileForm, validationConfig) {
         const errorElement = profileForm.querySelector(`.${input.id}_error_message`);
         hideInputError(input, validationConfig, errorElement);
     })
-    disabledButtonStatus(profileForm, allInput, validationConfig);
+    toggleButtonState(profileForm, allInput, validationConfig);
 }
 
-function disabledButtonStatus(profileForm, allInput, validationConfig){
+function toggleButtonState(profileForm, allInput, validationConfig){
     const formButton = profileForm.querySelector(validationConfig.submitButtonSelector);
     if (hasInvalidInput(allInput)) {
         formButton.disabled = true;
