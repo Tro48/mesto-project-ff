@@ -1,18 +1,14 @@
 import { configApi } from "./config_api.js"
 
+
+
 export const userData = () => {
     return fetch(`${configApi.baseUrl}/users/me`, {
         headers: {
             authorization: configApi.headers.authorization,
             'Content-Type': configApi.headers.contentTypeJson
         }
-    }).then(res => {
-        if(res.ok) {
-            return res.json()
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {console.log(err)});
+    }).then(res => configApi.response(res));
 }
 
 export const cardsData = () => {
@@ -21,12 +17,7 @@ export const cardsData = () => {
             authorization: configApi.headers.authorization,
             'Content-Type': configApi.headers.contentTypeJson
         }
-    }).then(res => {
-        if (res.ok) {
-            return res.json()
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-    }).catch((err) => { console.log(err) });
+    }).then(res => configApi.response(res));
 }
 
 export const editProfile = (name, about) => {
@@ -41,12 +32,7 @@ export const editProfile = (name, about) => {
             about: about
         })
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json()
-            }
-            return Promise.reject(`Ошибка: ${res.status}`);
-        }).catch((err) => { console.log(err) });
+        .then(res => configApi.response(res));
 }
 
 export const addAvatar = (url) => {
@@ -60,12 +46,7 @@ export const addAvatar = (url) => {
             avatar: url
         })
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json()
-            }
-            return Promise.reject(`Ошибка: ${res.status}`);
-        }).catch((err) => { console.log(err) });
+        .then(res => configApi.response(res));
 }
 
 export const addLike = (cardId) => {
@@ -76,12 +57,7 @@ export const addLike = (cardId) => {
             'Content-Type': configApi.headers.contentTypeJson,
         },
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json()
-            }
-            return Promise.reject(`Ошибка: ${res.status}`);
-        }).catch((err) => { console.log(err) });
+        .then(res => configApi.response(res));
 }
 
 export const removeLike = (cardId) => {
@@ -92,12 +68,7 @@ export const removeLike = (cardId) => {
             'Content-Type': configApi.headers.contentTypeJson,
         },
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json()
-            }
-            return Promise.reject(`Ошибка: ${res.status}`);
-        }).catch((err) => { console.log(err) });
+        .then(res => configApi.response(res));
 }
 
 export const addNewCard = (name, link) => {
@@ -111,12 +82,7 @@ export const addNewCard = (name, link) => {
             name: name,
             link: link
         })
-    }).then(res => {
-        if (res.ok) {
-            return res.json()
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-    }).catch((err) => { console.log(err) });
+    }).then(res => configApi.response(res));
 }
 
 export const deleteCard = (cardId) => {
@@ -127,4 +93,5 @@ export const deleteCard = (cardId) => {
             'Content-Type': configApi.headers.contentTypeJson
         },
     })
+        .then(res => configApi.response(res));
 }

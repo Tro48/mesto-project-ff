@@ -7,18 +7,26 @@ function enableValidation(validationConfig){
 }
 
 function setEventListeners(form, validationConfig){
-    const allInput = Array.from(form.querySelectorAll(validationConfig.inputSelector))
-    clearValidation(form, validationConfig);
+    const allInput = Array.from(form.querySelectorAll(validationConfig.inputSelector));
+    disabledButtonStatus(form, allInput, validationConfig);
     allInput.forEach((inputItem) => {
         inputItem.addEventListener('input', () => {
             isValid(form, inputItem, validationConfig);
-            clearValidation(form, validationConfig);
+            disabledButtonStatus(form, allInput, validationConfig);
         })
     })
 }
 
 function clearValidation(profileForm, validationConfig) {
     const allInput = Array.from(profileForm.querySelectorAll(validationConfig.inputSelector));
+    allInput.forEach((input) => {
+        const errorElement = profileForm.querySelector(`.${input.id}_error_message`);
+        hideInputError(input, validationConfig, errorElement);
+    })
+    disabledButtonStatus(profileForm, allInput, validationConfig);
+}
+
+function disabledButtonStatus(profileForm, allInput, validationConfig){
     const formButton = profileForm.querySelector(validationConfig.submitButtonSelector);
     if (hasInvalidInput(allInput)) {
         formButton.disabled = true;
@@ -27,18 +35,11 @@ function clearValidation(profileForm, validationConfig) {
         formButton.disabled = false;
         formButton.classList.remove(validationConfig.inactiveButtonClass);
     }
-
-    if (!profileForm.closest('.popup').classList.contains('popup_is-opened')){
-        allInput.forEach((input) => {
-            const errorElement = profileForm.querySelector(`.${input.id}_error_message`);
-            hideInputError(input, validationConfig, errorElement);
-        })
-    }
 }
 
 function hasInvalidInput(allInput) {
     return allInput.some((item) => {
-        return !item.validity.valid
+        return !item.validity.valid;
     })
 }
 
@@ -67,4 +68,4 @@ function hideInputError(elementInput, validationConfig, errorElement) {
     errorElement.textContent = '';
 }
 
-export { enableValidation}
+export { enableValidation, clearValidation }

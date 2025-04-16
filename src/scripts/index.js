@@ -1,9 +1,9 @@
 import '../pages/index.css'
 import { addCard } from '../components/card.js'
 import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
-import { enableValidation } from '../components/validation.js'
+import { enableValidation, clearValidation } from '../components/validation.js'
 import { validationConfig } from '../components/validationConfig.js'
-import { userData, cardsData, editProfile, addNewCard, addAvatar } from '../components/api.js'
+import { userData, cardsData, editProfile, addNewCard, addAvatar, deleteCard, addLike, removeLike } from '../components/api.js'
 
 // @todo: DOM узлы
 const pageContent = document.querySelector('.page__content');
@@ -20,26 +20,30 @@ const profileJob = pageContent.querySelector('.profile__description');
 const profileImg = pageContent.querySelector('.profile__image');
 const imageModal = pageContent.querySelector('.popup__image');
 const captionModal = pageContent.querySelector('.popup__caption');
+const modalConfirm = pageContent.querySelector('.popup_type_confirm');
+let cardForDel = {}
 
-loadProfileData()
+loadProfileData();
+enableValidation(validationConfig);
 
 // Обработчик клика для открытия модалок
 content.querySelector('.profile__edit-button').addEventListener('click', () => {
-    modalEditProfile.querySelector('.popup__button').textContent = 'Сохранить';
-    enableValidation(validationConfig);
     addTextProfileInForm();
     openModal(modalEditProfile);
+    clearValidation(allForms.editProfile, validationConfig);
 })
 content.querySelector('.profile__add-button').addEventListener('click', () => {
-    modalCardAdd.querySelector('.popup__button').textContent = 'Создать';
-    enableValidation(validationConfig);
     openModal(modalCardAdd);
+    clearValidation(allForms.newPlace, validationConfig);
 })
 
 content.querySelector('.add_new_avatar').addEventListener('click', () => {
-    modalNewAvatar.querySelector('.popup__button').textContent = 'Сохранить';
-    enableValidation(validationConfig);
-    openModal(modalNewAvatar)
+    openModal(modalNewAvatar);
+    clearValidation(allForms.newAvatar, validationConfig);
+})
+
+allForms.formConfirm.addEventListener('submit', (evt) => {
+    delCard(evt, cardForDel)
 })
 
 allForms.editProfile.addEventListener('submit', (evt) => {
@@ -54,7 +58,7 @@ allForms.newPlace.addEventListener('submit', (evt) => {
 
 allForms.newAvatar.addEventListener('submit', (evt) => {
     modalNewAvatar.querySelector('.popup__button').textContent = 'Сохранение...';
-    addNewAvatar(evt, modalNewAvatar)
+    addNewAvatar(evt, modalNewAvatar);
 })
 
 modalList.forEach((item) => {
@@ -66,22 +70,35 @@ modalList.forEach((item) => {
 //Функция открытия картинки карточки
 function openImg(evt) {
     imageModal.src = evt.target.src;
+    imageModal.alt = evt.target.alt;
     captionModal.textContent = evt.target.alt;
     openModal(modalImg);
+}
+
+// @todo: Функция удаления карточки
+function delCard(evt, cardForDel) {
+    evt.preventDefault();
+    deleteCard(cardForDel.id)
+        .then(()=> {
+            cardForDel.itemCard.remove();
+            closeModal(modalConfirm);
+            cardForDel = {}
+        })
+        .catch((err) => console.log(err));
 }
 
 // Функция обработки данных формы профиля и добавления в DOM
 function handleProfileFormSubmit(evt, popup) {
     evt.preventDefault();
     editProfile(allForms.editProfile.name.value, allForms.editProfile.description.value)
-        .then(res => {renderProfileData(res.name, res.about)
-            return true
-        })
         .then(res => {
-            if(res){
-                allForms.editProfile.reset();
-                closeModal(popup);
-            }
+            renderProfileData(res.name, res.about);
+            allForms.editProfile.reset();
+            closeModal(popup);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+            modalEditProfile.querySelector('.popup__button').textContent = 'Сохранить'; 
         })
 }
 
@@ -96,15 +113,22 @@ function addCardModal(evt, popup) {
     const titleCard = allForms.newPlace.placeName.value;
     const imgCardUrl = allForms.newPlace.link.value;
     addNewCard(titleCard, imgCardUrl)
-        .then(res => {
-            placesList.prepend(addCard(res.name, res.link, openImg, true, res._id, 0, false, openModal, closeModal))
-            return true
-        })
-        .then(res => {
-            if(res){
-                allForms.newPlace.reset();
-                closeModal(popup);
+        .then(res => { 
+            const cardItemData = {
+                titleCard: res.name,
+                imgCardUrl: res.link,
+                idCard: res._id,
+                likes: res.likes,
+                resultValid: true,
+                userId: res.owner._id
             }
+            placesList.prepend(addCard(cardItemData, openImg, openModalConfirm, addLike, removeLike));
+            allForms.newPlace.reset();
+            closeModal(popup);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+            modalCardAdd.querySelector('.popup__button').textContent = 'Создать';
         })
 }
 
@@ -115,7 +139,7 @@ function loadProfileData() {
             renderProfileAvatar(userDataResult.avatar, userDataResult.name);
             renderCard(userDataResult, cardsDataResult)
         })
-        .catch(error => { console.error(error) })
+        .catch((err) => console.log(err));
 }
 
 function renderProfileData(nameValue, aboutValue){
@@ -132,24 +156,34 @@ function addNewAvatar(evt, modal){
     evt.preventDefault();
     addAvatar(allForms.newAvatar.linkAvatar.value)
         .then(res => {
-            profileImg.src = res.avatar
-            return true
+            profileImg.src = res.avatar;
+            allForms.newAvatar.reset();
+            closeModal(modal);
         })
-        .then(res => {
-            if(res){
-                allForms.newAvatar.reset();
-                closeModal(modal);
-            }
+        .catch((err) => console.log(err))
+        .finally(() => {
+            modalNewAvatar.querySelector('.popup__button').textContent = 'Сохранить';
         })
+}
+
+function openModalConfirm(idCard, itemCard){
+    cardForDel = {
+        id: idCard,
+        itemCard
+    }
+    openModal(modalConfirm);
 }
 
 function renderCard(userDataResult, cardsDataResult) {
     cardsDataResult.forEach((item) => {
-        let likedIt
-        item.likes.forEach((profile) => {
-            likedIt = profile._id === userDataResult._id
-        })
-        const resultValidId = userDataResult._id === item.owner._id;
-        placesList.append(addCard(item.name, item.link, openImg, resultValidId, item._id, item.likes.length, likedIt, openModal, closeModal));
+        const cardItemData = {
+            titleCard: item.name,
+            imgCardUrl: item.link,
+            idCard: item._id,
+            likes: item.likes,
+            resultValid: userDataResult._id === item.owner._id,
+            userId: userDataResult._id
+        }
+        placesList.append(addCard(cardItemData, openImg, openModalConfirm, addLike, removeLike));
     });
 }
