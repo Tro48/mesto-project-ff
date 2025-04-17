@@ -1,5 +1,5 @@
 import '../pages/index.css'
-import { addCard } from '../components/card.js'
+import { addCard, likeCard } from '../components/card.js'
 import { openModal, closeModalByClick, closeModal } from '../components/modal.js'
 import { enableValidation, clearValidation } from '../components/validation.js'
 import { validationConfig } from '../components/validationConfig.js'
@@ -122,7 +122,7 @@ function addCardModal(evt, popup) {
                 resultValid: true,
                 userId: res.owner._id
             }
-            placesList.prepend(addCard(cardItemData, openImg, openModalConfirm, likeCard));
+            placesList.prepend(addCard(cardItemData, openImg, openModalConfirm, likeCard, addLike, removeLike));
             allForms.newPlace.reset();
             closeModal(popup);
         })
@@ -184,25 +184,6 @@ function renderCard(userDataResult, cardsDataResult) {
             resultValid: userDataResult._id === item.owner._id,
             userId: userDataResult._id
         }
-        placesList.append(addCard(cardItemData, openImg, openModalConfirm, likeCard));
+        placesList.append(addCard(cardItemData, openImg, openModalConfirm, likeCard, addLike, removeLike));
     });
-}
-
-// Функция лайка карточки
-function likeCard(evt, idCard, likeCardItem ) {
-    if (!evt.target.classList.contains('card__like-button_is-active')) {
-        addLike(idCard)
-            .then((res) => {
-                evt.target.classList.add('card__like-button_is-active');
-                likeCardItem.textContent = res.likes.length;
-            })
-            .catch((err) => console.log(err))
-    } else {
-        removeLike(idCard)
-            .then((res) => {
-                evt.target.classList.remove('card__like-button_is-active');
-                likeCardItem.textContent = res.likes.length;
-            })
-            .catch((err) => console.log(err))
-    }
 }
